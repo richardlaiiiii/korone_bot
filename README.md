@@ -1,7 +1,7 @@
 # 戌神ころね bot is created by richardlaiiiii in 2022/6/3.
 
 My prefix is "~"
-~help
+~help \n
 To get help.
 ~calc <formula>
 To calculate your formula.
