@@ -137,7 +137,7 @@ async def guess(ctx, *,args):
 @bot.command()
 async def join(ctx):
     if coins.get(str(ctx.message.author.id),-1)==-1:
-        coins[str(ctx.message.author.id)]=1000
+        coins[str(ctx.message.author.id)]=48763
         await ctx.send("Successfully Registered.")
     else:
         await ctx.send("You've registered it.")
@@ -191,18 +191,23 @@ async def coins(ctx):
 
 @bot.command()
 async def give(ctx, *,args):
-    tmp=args.split(' ',1)
-    money=int(tmp[1])
-    person=str(ctx.message.mentions[0].id)
-    name=str(ctx.message.mentions[0].name)
-    if person not in coins:
-        coins[person]=1000
-    await ctx.send(f'You\'ve give {name} {money} dollars.')
-    coins[person]+=money
-    coins[str(ctx.message.author.id)]-=money
-    with open("coins.json",'w') as f:
-        json.dump(coins,f)
-
+    if str(ctx.message.author.id in coins):
+        tmp=args.split(' ',1)
+        money=int(tmp[1])
+        if money>0:
+            person=str(ctx.message.mentions[0].id)
+            name=str(ctx.message.mentions[0].name)
+            if person not in coins:
+                coins[person]=1000
+            await ctx.send(f'You\'ve given {name} {money} dollars.')
+            coins[person]+=money
+            coins[str(ctx.message.author.id)]-=money
+            with open("coins.json",'w') as f:
+                json.dump(coins,f)
+        else:
+            await ctx.send("That's illegal.The money number should be positive!")
+    else:
+        await ctx.send("You should join first.")
 bot.remove_command('help')
 @bot.command()
 async def help(ctx):
@@ -213,26 +218,29 @@ async def help(ctx):
     embed.add_field(name = '~help',\
     	value = 'To get help',\
     	inline = False)
-    embed.add_field(name = '~calc',\
+    embed.add_field(name = '~calc <formula>',\
     	value = 'To calculate your formula',\
     	inline = False)
     embed.add_field(name = '~now', 
     	value = 'To get the current time',\
     	inline = False)
-    embed.add_field(name = '~guess',\
+    embed.add_field(name = '~guess <number>',\
     	value = 'To guess a number (range : 1 ~ 5)',\
     	inline = False)
     embed.add_field(name = '~ping',\
-    	value = 'To get the ping delay',\
+    	value = 'To get the latency of the bot.',\
     	inline = False)
-    embed.add_field(name = '~say',\
+    embed.add_field(name = '~say <sentence>',\
     	value = 'To repeat a sentence you typed in.(\'admin\' roles only)',\
     	inline = False)
     embed.add_field(name = '~join',\
     	value = 'To join the game and then you can earn your money by playing.',\
     	inline = False)
-    embed.add_field(name = '~dice',\
+    embed.add_field(name = '~dice <money>',\
     	value = 'To roll a dice.',\
+    	inline = False)
+    embed.add_field(name = '~give <user> <counts>',\
+    	value = 'To give someone you mentioned money.',\
     	inline = False)
     embed.add_field(name = '~coins',\
     	value = 'To show how much money you have now.',\
@@ -240,4 +248,4 @@ async def help(ctx):
     await ctx.send(embed = embed)
 
 keep_alive.keep_alive()
-bot.run('My token')
+bot.run('My TOKEN')
