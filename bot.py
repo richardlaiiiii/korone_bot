@@ -111,6 +111,7 @@ async def say(ctx, *,args):
     await ctx.message.delete()
     try:
         await ctx.send(tmp)
+        print(f'{str(ctx.message.author.name)}: {tmp}')
     except:
         await ctx.send("Type error. (You can't made me say empty sentence.)")
 
@@ -195,15 +196,18 @@ async def give(ctx, *,args):
         tmp=args.split(' ',1)
         money=int(tmp[1])
         if money>0:
-            person=str(ctx.message.mentions[0].id)
-            name=str(ctx.message.mentions[0].name)
-            if person not in coins:
-                coins[person]=1000
-            await ctx.send(f'You\'ve given {name} {money} dollars.')
-            coins[person]+=money
-            coins[str(ctx.message.author.id)]-=money
-            with open("coins.json",'w') as f:
-                json.dump(coins,f)
+            if money<=coins[str(ctx.message.author.id)]:
+                person=str(ctx.message.mentions[0].id)
+                name=str(ctx.message.mentions[0].name)
+                if person not in coins:
+                    coins[person]=1000
+                await ctx.send(f'You\'ve given {name} {money} dollars.')
+                coins[person]+=money
+                coins[str(ctx.message.author.id)]-=money
+                with open("coins.json",'w') as f:
+                    json.dump(coins,f)
+            else:
+                await ctx.send("You don't have enough money.")
         else:
             await ctx.send("That's illegal.The money number should be positive!")
     else:
@@ -248,4 +252,4 @@ async def help(ctx):
     await ctx.send(embed = embed)
 
 keep_alive.keep_alive()
-bot.run('My TOKEN')
+bot.run('My Token')
