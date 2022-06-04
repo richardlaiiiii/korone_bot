@@ -85,11 +85,11 @@ async def on_message(message):
 """
 @bot.event
 async def on_member_join(member):
-    await member.send(f'歡迎{member.name}加入伺服器!')
+    await member.send(f'Welcome {member.name} to join this server!')
 
 @bot.event
 async def on_member_remove(member):
-    await member.send(f'QQ {member.name}怎麼離開伺服器ㄌ')
+    await member.send(f'So sad to see {member.name} leave this server, hope you to join here again.')
 
 @bot.command()
 async def ping(ctx):
