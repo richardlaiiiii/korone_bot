@@ -65,10 +65,9 @@ def getdate():
     err = datetime.timedelta(hours=8)
     x += err
     y = x.year
-    m = ['Jan', 'Feb', 'Mar', 'Apr', 'May', 'Jun', 'Jul',
-         'Aug', 'Sep', 'Oct', 'Nov', 'Dec'][x.month - 1]
+    m = x.month
     d = x.day
-    res=str(y)+'/'+str(m)+'/'+str(d)
+    res=str(y)+'-'+str(m)+'-'+str(d)
     return res
 
 @bot.event
@@ -160,8 +159,8 @@ async def vote(ctx, *,args):
     question=options[0]
     embed = discord.Embed(title='Vote started in '+getdate(),description=str(question),color = 1752220)
     for i in range(1,len(options)):
-        embed.add_field(name=emoji[i-1],\
-                        value=str(options[i]),\
+        embed.add_field(name=emoji[i-1]+": "+str(options[i]),\
+                        value='------------------------------------',\
                         inline=False)
     msg=await ctx.send(embed=embed)
     for i in range(1,len(options)):
@@ -207,7 +206,43 @@ async def dice(ctx, *,args):
         await ctx.send(f'Now you have {coins[str(ctx.message.author.id)]} dollars.')
         with open("coins.json",'w') as f:
             json.dump(coins,f)
-
+@bot.command()
+async def slots(ctx):
+    if str(ctx.message.author.id) in coins:
+        emoji=['0️⃣','1️⃣','2️⃣','3️⃣','4️⃣','5️⃣','6️⃣','7️⃣','8️⃣','9️⃣',]
+        a=choice(emoji)
+        b=choice(emoji)
+        c=choice(emoji)
+        embed=discord.Embed(title="Lottery",color=3066993)
+        embed.add_field(name = a,\
+        	value = '-----',\
+        	inline = True)
+        embed.add_field(name = b,\
+        	value = '-----',\
+        	inline = True)
+        embed.add_field(name = c,\
+        	value = '-----',\
+        	inline = True)
+        if a==b==c:
+            embed.add_field(name = 'Result',\
+        	    value = 'ORZ! You earned the first prize, 48763 dollars.',\
+        	    inline = False)
+            coins[str(ctx.message.author.id)]+=48763
+        elif a==b or b==c or a==c:
+            embed.add_field(name = 'Result',\
+        	    value = 'Congrats! You earned 1000 dollars.',\
+        	    inline = False)
+            coins[str(ctx.message.author.id)]+=1000
+        else:
+            embed.add_field(name = 'Result',\
+        	    value = 'You lost 1000 dollars. QwQ',\
+        	    inline = False)
+            coins[str(ctx.message.author.id)]-=1000
+        await ctx.send(embed=embed)
+        with open("coins.json",'w') as f:
+                json.dump(coins,f)
+    else:
+        await ctx.send("You should join first.")
 @bot.command()
 async def spam(ctx, *,args):
     tmp=args.split(' ',1)
@@ -250,46 +285,49 @@ bot.remove_command('help')
 @bot.command()
 async def help(ctx):
     embed = discord.Embed(title="Help",color = 2123412)
-    embed.add_field(name = 'My prefix',\
+    embed.add_field(name = 'My prefix.',\
     	value = '~',\
-    	inline = False)
+    	inline = True)
     embed.add_field(name = '~help',\
-    	value = 'To get help',\
-    	inline = False)
+    	value = 'To get help.',\
+    	inline = True)
     embed.add_field(name = '~calc <formula>',\
-    	value = 'To calculate your formula',\
-    	inline = False)
+    	value = 'To calculate your formula.',\
+    	inline = True)
     embed.add_field(name = '~now', 
-    	value = 'To get the current time',\
-    	inline = False)
+    	value = 'To get the current time.',\
+    	inline = True)
     embed.add_field(name = '~guess <number>',\
-    	value = 'To guess a number (range : 1 ~ 5)',\
-    	inline = False)
+    	value = 'To guess a number (range : 1 ~ 5).',\
+    	inline = True)
     embed.add_field(name = '~ping',\
     	value = 'To get the latency of the bot.',\
-    	inline = False)
+    	inline = True)
     embed.add_field(name = '~say <sentence>',\
     	value = 'To repeat a sentence you typed in.(\'admin\' roles only)',\
-    	inline = False)
+    	inline = True)
     embed.add_field(name = '~vote <question>|<option1>|<option2>|...(up to ten options)',\
     	value = 'To start a vote.',\
-    	inline = False)
+    	inline = True)
     embed.add_field(name = '~choose <option1> <option2> <option3>....',\
     	value = 'To choose between the options you gived randomly.',\
-    	inline = False)
+    	inline = True)
     embed.add_field(name = '~join',\
     	value = 'To join the game and then you can earn your money by playing.',\
-    	inline = False)
+    	inline = True)
     embed.add_field(name = '~dice <money>',\
     	value = 'To roll a dice.',\
-    	inline = False)
+    	inline = True)
+    embed.add_field(name = '~slots',\
+    	value = 'To play a tiny lottery game.',\
+    	inline = True)
     embed.add_field(name = '~give <user> <counts>',\
     	value = 'To give someone you mentioned money.',\
-    	inline = False)
+    	inline = True)
     embed.add_field(name = '~coins',\
     	value = 'To show how much money you have now.',\
-    	inline = False)
+    	inline = True)
     await ctx.send(embed = embed)
 
 keep_alive.keep_alive()
-bot.run('TOKEN')
+bot.run('MY TOKEN')
