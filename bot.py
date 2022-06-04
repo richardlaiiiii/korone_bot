@@ -3,6 +3,7 @@ import discord
 import keep_alive
 import json
 import os
+from random import choice
 import random
 
 intents=discord.Intents.all()
@@ -57,6 +58,17 @@ def gettime():
     s = x.second
     w = ['Sun', 'Mon', 'Tue', 'Wed', 'Thu', 'Fri', 'Sat'][(x.weekday() + 1) % 7]
     res = '{} {} {:02d} {:02d}:{:02d}:{:02d} {}'.format(w, m, d, h, mi, s, y)
+    return res
+
+def getdate():
+    x = datetime.datetime.now()
+    err = datetime.timedelta(hours=8)
+    x += err
+    y = x.year
+    m = ['Jan', 'Feb', 'Mar', 'Apr', 'May', 'Jun', 'Jul',
+         'Aug', 'Sep', 'Oct', 'Nov', 'Dec'][x.month - 1]
+    d = x.day
+    res=str(y)+'/'+str(m)+'/'+str(d)
     return res
 
 @bot.event
@@ -135,6 +147,26 @@ async def guess(ctx, *,args):
         return s
     await ctx.send(Guess(int(args)))
 
+@bot.command()
+async def choose(ctx, *,args):
+    options=args.split(' ')
+    await ctx.reply(choice(options))
+
+@bot.command()
+async def vote(ctx, *,args):
+    emoji=['0️⃣','1️⃣','2️⃣','3️⃣','4️⃣','5️⃣','6️⃣','7️⃣','8️⃣','9️⃣',]
+    options=args.split('|')
+    print(options)
+    question=options[0]
+    embed = discord.Embed(title='Vote started in '+getdate(),description=str(question),color = 1752220)
+    for i in range(1,len(options)):
+        embed.add_field(name=emoji[i-1],\
+                        value=str(options[i]),\
+                        inline=False)
+    msg=await ctx.send(embed=embed)
+    for i in range(1,len(options)):
+        await msg.add_reaction(emoji[i-1])
+    
 @bot.command()
 async def join(ctx):
     if coins.get(str(ctx.message.author.id),-1)==-1:
@@ -239,6 +271,12 @@ async def help(ctx):
     embed.add_field(name = '~say <sentence>',\
     	value = 'To repeat a sentence you typed in.(\'admin\' roles only)',\
     	inline = False)
+    embed.add_field(name = '~vote <question>|<option1>|<option2>|...(up to ten options)',\
+    	value = 'To start a vote.',\
+    	inline = False)
+    embed.add_field(name = '~choose <option1> <option2> <option3>....',\
+    	value = 'To choose between the options you gived randomly.',\
+    	inline = False)
     embed.add_field(name = '~join',\
     	value = 'To join the game and then you can earn your money by playing.',\
     	inline = False)
@@ -254,4 +292,4 @@ async def help(ctx):
     await ctx.send(embed = embed)
 
 keep_alive.keep_alive()
-bot.run('My Token')
+bot.run('TOKEN')
