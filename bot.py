@@ -196,7 +196,7 @@ async def give(ctx, *,args):
         tmp=args.split(' ',1)
         money=int(tmp[1])
         if money>0:
-            if money<=coins[str(ctx.message.author.id)]:
+            if money<=coins[str(ctx.message.author.id)] and ctx.message.mentions[0].id!=ctx.message.author.id:
                 person=str(ctx.message.mentions[0].id)
                 name=str(ctx.message.mentions[0].name)
                 if person not in coins:
@@ -206,7 +206,9 @@ async def give(ctx, *,args):
                 coins[str(ctx.message.author.id)]-=money
                 with open("coins.json",'w') as f:
                     json.dump(coins,f)
-            else:
+            elif str(ctx.message.mentions[0].id)==str(ctx.message.author.id):
+                await ctx.send("You can't give money to yourself. That\'s meaningless.")
+            else :
                 await ctx.send("You don't have enough money.")
         else:
             await ctx.send("That's illegal.The money number should be positive!")
