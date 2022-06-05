@@ -30,4 +30,4 @@ To play a tiny lottery game.
 #### ~coins: 
 To show how much money you have now.
 
-![image](https://user-images.githubusercontent.com/102777289/172030655-a9994941-e071-4539-a8c3-d0ea0583d7a8.png)
+![image](https://user-images.githubusercontent.com/102777289/172030655-a9994941-e071-4539-a8c3-d0ea0583d7a8.png=)
