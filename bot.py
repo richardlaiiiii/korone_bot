@@ -206,6 +206,30 @@ async def dice(ctx, *,args):
         await ctx.send(f'Now you have {coins[str(ctx.message.author.id)]} dollars.')
         with open("coins.json",'w') as f:
             json.dump(coins,f)
+
+@bot.command()
+async def rps(ctx, *,args):
+    if str(ctx.message.author.id) in coins:
+        res=args.split(' ')
+        op=str(res[0])
+        money=int(res[1])
+        ges=["rock","paper","scissor"]
+        x=choice(ges)
+        await ctx.send(f'You threw {op}, I threw {x}.')
+        if op==x:
+            await ctx.send('Tie')
+        elif (op=="rock" and x=="scissor") or (op=="paper" and x=="rock") or (op=="scissor" and x=="paper"):
+            await ctx.send(f'Congrats! You won and earned {money} dollars.')
+            coins[str(ctx.message.author.id)]+=money
+        else:
+            await ctx.send(f'QQ! You lost {money} dollars.')
+            coins[str(ctx.message.author.id)]-=money
+        with open("coins.json",'w') as f:
+                json.dump(coins,f)
+        await ctx.send(f'Now you have {coins[str(ctx.message.author.id)]} dollars.')
+    else:
+        await ctx.send('You should join first.')
+
 @bot.command()
 async def slots(ctx):
     if str(ctx.message.author.id) in coins:
@@ -241,16 +265,21 @@ async def slots(ctx):
         await ctx.send(embed=embed)
         with open("coins.json",'w') as f:
                 json.dump(coins,f)
+        await ctx.send(f'Now you have {coins[str(ctx.message.author.id)]} dollars.')
     else:
         await ctx.send("You should join first.")
+
 @bot.command()
 async def spam(ctx, *,args):
     tmp=args.split(' ',1)
     times=int(tmp[1])
     sentence=tmp[0]
     if times>=0:
-        for i in range(times):
-            await ctx.send(sentence)
+        if times<=20:
+            for i in range(times):
+                await ctx.send(sentence)
+        else:
+            await ctx.send("The spam times are too high.")
     else:
         await ctx.send('The spam times can\'t be zero or lower.')
 @bot.command()
@@ -273,6 +302,8 @@ async def give(ctx, *,args):
                 coins[str(ctx.message.author.id)]-=money
                 with open("coins.json",'w') as f:
                     json.dump(coins,f)
+                await ctx.send(f'Now you have {coins[str(ctx.message.author.id)]} dollars.')
+                
             elif str(ctx.message.mentions[0].id)==str(ctx.message.author.id):
                 await ctx.send("You can't give money to yourself. That\'s meaningless.")
             else :
@@ -320,6 +351,9 @@ async def help(ctx):
     	inline = True)
     embed.add_field(name = '~slots',\
     	value = 'To play a tiny lottery game.',\
+    	inline = True)
+    embed.add_field(name = '~rps',\
+    	value = 'To play the rps game.',\
     	inline = True)
     embed.add_field(name = '~give <user> <counts>',\
     	value = 'To give someone you mentioned money.',\
