@@ -17,7 +17,7 @@ def operation(s):
     s = s.replace('log', 'log10')
     s = s.replace('ln', 'log')
     i, t = len(s) - 1, 0
-    while i >= 0: # 處理 "factorial 階乘"
+    while i >= 0: 
         if s[i] == '!':
             if s[i - 1].isdigit():
                 t, i = i, i - 1
@@ -168,8 +168,8 @@ async def vote(ctx, *,args):
     
 @bot.command()
 async def join(ctx):
-    if coins.get(str(ctx.message.author.id),-1)==-1:
-        coins[str(ctx.message.author.id)]=48763
+    if coins.get(str(ctx.message.author.name),-1)==-1:
+        coins[str(ctx.message.author.name)]=48763
         await ctx.send("Successfully Registered.")
     else:
         await ctx.send("You've registered it.")
@@ -179,9 +179,9 @@ async def join(ctx):
 @bot.command()
 async def dice(ctx, *,args):
     money=int(args)
-    if str(ctx.message.author.id) not in coins:
+    if str(ctx.message.author.name) not in coins:
         await ctx.send('You should join first.')
-    elif money>coins[str(ctx.message.author.id)]:
+    elif money>coins[str(ctx.message.author.name)]:
         await ctx.send('You don\'t have enough money!')
     elif money<=0:
         await ctx.send('Type error!')
@@ -194,22 +194,22 @@ async def dice(ctx, *,args):
         await ctx.send(f'I roll {c} and {d}, {c+d} in total.')
         if a+b>c+d and a==b:
             await ctx.send(f'Orz! You roll the same points. You can earn {money}*2 dollars!')
-            coins[str(ctx.message.author.id)]+=2*money
+            coins[str(ctx.message.author.name)]+=2*money
         elif a+b>c+d:
             await ctx.send(f'Congrats! You won {money} dollars!')
-            coins[str(ctx.message.author.id)]+=money
+            coins[str(ctx.message.author.name)]+=money
         elif a+b<c+d:
             await ctx.send(f'You lost {money} dollars.')
-            coins[str(ctx.message.author.id)]-=money
+            coins[str(ctx.message.author.name)]-=money
         else:
             await ctx.send('Tie')
-        await ctx.send(f'Now you have {coins[str(ctx.message.author.id)]} dollars.')
+        await ctx.send(f'Now you have {coins[str(ctx.message.author.name)]} dollars.')
         with open("coins.json",'w') as f:
             json.dump(coins,f)
 
 @bot.command()
 async def rps(ctx, *,args):
-    if str(ctx.message.author.id) in coins:
+    if str(ctx.message.author.name) in coins:
         res=args.split(' ')
         op=str(res[0])
         money=int(res[1])
@@ -220,19 +220,19 @@ async def rps(ctx, *,args):
             await ctx.send('Tie')
         elif (op=="rock" and x=="scissor") or (op=="paper" and x=="rock") or (op=="scissor" and x=="paper"):
             await ctx.send(f'Congrats! You won and earned {money} dollars.')
-            coins[str(ctx.message.author.id)]+=money
+            coins[str(ctx.message.author.name)]+=money
         else:
             await ctx.send(f'QQ! You lost {money} dollars.')
-            coins[str(ctx.message.author.id)]-=money
+            coins[str(ctx.message.author.name)]-=money
         with open("coins.json",'w') as f:
                 json.dump(coins,f)
-        await ctx.send(f'Now you have {coins[str(ctx.message.author.id)]} dollars.')
+        await ctx.send(f'Now you have {coins[str(ctx.message.author.name)]} dollars.')
     else:
         await ctx.send('You should join first.')
 
 @bot.command()
 async def slots(ctx):
-    if str(ctx.message.author.id) in coins:
+    if str(ctx.message.author.name) in coins:
         emoji=['0️⃣','1️⃣','2️⃣','3️⃣','4️⃣','5️⃣','6️⃣','7️⃣','8️⃣','9️⃣',]
         a=choice(emoji)
         b=choice(emoji)
@@ -251,23 +251,38 @@ async def slots(ctx):
             embed.add_field(name = 'Result',\
         	    value = 'ORZ! You earned the first prize, 48763 dollars.',\
         	    inline = False)
-            coins[str(ctx.message.author.id)]+=48763
+            coins[str(ctx.message.author.name)]+=48763
         elif a==b or b==c or a==c:
             embed.add_field(name = 'Result',\
         	    value = 'Congrats! You earned 1000 dollars.',\
         	    inline = False)
-            coins[str(ctx.message.author.id)]+=1000
+            coins[str(ctx.message.author.name)]+=1000
         else:
             embed.add_field(name = 'Result',\
         	    value = 'You lost 1000 dollars. QwQ',\
         	    inline = False)
-            coins[str(ctx.message.author.id)]-=1000
+            coins[str(ctx.message.author.name)]-=1000
         await ctx.send(embed=embed)
         with open("coins.json",'w') as f:
                 json.dump(coins,f)
-        await ctx.send(f'Now you have {coins[str(ctx.message.author.id)]} dollars.')
+        await ctx.send(f'Now you have {coins[str(ctx.message.author.name)]} dollars.')
     else:
         await ctx.send("You should join first.")
+
+@bot.command()
+async def rank(ctx):
+    if len(coins)==0:
+        await ctx.send("No one has registered yet.")
+    else:
+        num=min(10,len(coins))
+        sortedcoins=dict(sorted(coins.items(),key=lambda x:x[1],reverse=True))
+        embed=discord.Embed(title='Coins Ranking',description='Let\'s see who earned the most money!',color=15844367)
+        j=0
+        for i in sortedcoins.keys():
+            j+=1
+            embed.add_field(name=f"#{j} "+i,value=sortedcoins[i],inline=False)
+    await ctx.send(embed=embed)
+
 
 @bot.command()
 async def spam(ctx, *,args):
@@ -284,27 +299,31 @@ async def spam(ctx, *,args):
         await ctx.send('The spam times can\'t be zero or lower.')
 @bot.command()
 async def coins(ctx):
-    await ctx.send(f'You have {coins[str(ctx.message.author.id)]} dollars now.')
+    if str(ctx.message.author.name) in coins:
+        await ctx.send(f'You have {coins[str(ctx.message.author.name)]} dollars now.')
+    else:
+        await ctx.send('You should join first.')
 
 @bot.command()
 async def give(ctx, *,args):
-    if str(ctx.message.author.id in coins):
+    if str(ctx.message.author.name in coins):
         tmp=args.split(' ',1)
         money=int(tmp[1])
         if money>0:
-            if money<=coins[str(ctx.message.author.id)] and ctx.message.mentions[0].id!=ctx.message.author.id:
-                person=str(ctx.message.mentions[0].id)
+            if money<=coins[str(ctx.message.author.name)] and ctx.message.mentions[0].name!=ctx.message.author.name:
+                person=str(ctx.message.mentions[0].name)
                 name=str(ctx.message.mentions[0].name)
                 if person not in coins:
-                    coins[person]=1000
+                    coins[person]=48763
+                    await ctx.send(f'{person} has been registered.')
                 await ctx.send(f'You\'ve given {name} {money} dollars.')
                 coins[person]+=money
-                coins[str(ctx.message.author.id)]-=money
+                coins[str(ctx.message.author.name)]-=money
                 with open("coins.json",'w') as f:
                     json.dump(coins,f)
-                await ctx.send(f'Now you have {coins[str(ctx.message.author.id)]} dollars.')
+                await ctx.send(f'Now you have {coins[str(ctx.message.author.name)]} dollars.')
                 
-            elif str(ctx.message.mentions[0].id)==str(ctx.message.author.id):
+            elif str(ctx.message.mentions[0].name)==str(ctx.message.author.name):
                 await ctx.send("You can't give money to yourself. That\'s meaningless.")
             else :
                 await ctx.send("You don't have enough money.")
@@ -352,7 +371,7 @@ async def help(ctx):
     embed.add_field(name = '~slots',\
     	value = 'To play a tiny lottery game.',\
     	inline = True)
-    embed.add_field(name = '~rps',\
+    embed.add_field(name = '~rps <option> <money>',\
     	value = 'To play the rps game.',\
     	inline = True)
     embed.add_field(name = '~give <user> <counts>',\
@@ -360,6 +379,9 @@ async def help(ctx):
     	inline = True)
     embed.add_field(name = '~coins',\
     	value = 'To show how much money you have now.',\
+    	inline = True)
+    embed.add_field(name = '~rank',\
+    	value = 'To see who earned the most money.',\
     	inline = True)
     await ctx.send(embed = embed)
 
