@@ -29,3 +29,5 @@ To choose between the options you gived randomly.
 To play a tiny lottery game.
 #### ~coins: 
 To show how much money you have now.
+#### ~rank: 
+To see who earned the most money!
