@@ -130,7 +130,8 @@ async def say(ctx, *,args):
 @bot.command()
 async def translate(ctx, *,args):
     translator = Translator()
-    translation = translator.translate(args, dest='en')
+    r=args.split(' ',1)
+    translation = translator.translate(str(r[1]), dest=str(r[0]))
     s=str(translation.text)
     s=s.capitalize()
     await ctx.send(s)
@@ -378,6 +379,12 @@ async def help(ctx):
     embed.add_field(name = '~say <sentence>',\
     	value = 'To repeat a sentence you typed in.(\'admin\' roles only)',\
     	inline = True)
+    embed.add_field(name = '~translate <lang> <sentence>',\
+    	value = 'To Translate the sentence to certain language.',\
+    	inline = True)
+    embed.add_field(name = '~remindme <x>h<y>m<z>s <event>',\
+    	value = 'To remind you to do something in x hrs, y mins, z secs.',\
+    	inline = True)
     embed.add_field(name = '~vote <question>|<option1>|<option2>|...(up to ten options)',\
     	value = 'To start a vote.',\
     	inline = True)
@@ -407,4 +414,4 @@ async def help(ctx):
     	inline = True)
     await ctx.send(embed = embed)
 
-bot.run('MY TOKEN')
+bot.run('TOKEN')
