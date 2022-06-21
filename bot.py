@@ -1,10 +1,11 @@
 from discord.ext import commands
 import discord
-import keep_alive
 import json
 import os
 from random import choice
 import random
+import asyncio
+from googletrans import Translator
 
 intents=discord.Intents.all()
 bot=commands.Bot(command_prefix="~",intents=intents)
@@ -127,6 +128,14 @@ async def say(ctx, *,args):
         await ctx.send("Type error. (You can't made me say empty sentence.)")
 
 @bot.command()
+async def translate(ctx, *,args):
+    translator = Translator()
+    translation = translator.translate(args, dest='en')
+    s=str(translation.text)
+    s=s.capitalize()
+    await ctx.send(s)
+
+@bot.command()
 async def calc(ctx, *,args):
     ans=operation(args)
     await ctx.send(f'Result of {args} is {ans}.')
@@ -145,11 +154,6 @@ async def guess(ctx, *,args):
         s = f'right ans is {tmp}, your ans is {a[n == tmp]}'
         return s
     await ctx.send(Guess(int(args)))
-
-@bot.command()
-async def choose(ctx, *,args):
-    options=args.split(' ')
-    await ctx.reply(choice(options))
 
 @bot.command()
 async def vote(ctx, *,args):
@@ -206,6 +210,24 @@ async def dice(ctx, *,args):
         await ctx.send(f'Now you have {coins[str(ctx.message.author.name)]} dollars.')
         with open("coins.json",'w') as f:
             json.dump(coins,f)
+
+@bot.command()
+async def remindme(ctx, *,args):
+    tmp=args.split(' ',1)
+    date=tmp[0]
+    thing=tmp[1]
+    a=date.split('h')
+    hour=int(a[0])
+    b=a[1].split('m')
+    mins=int(b[0])
+    c=b[1].split('s')
+    sec=int(c[0])
+    total=3600*hour+60*mins+sec
+    embed=discord.Embed(title=thing,description=f'I will remind you in {hour}hrs {mins}mins {sec}s.')
+    await ctx.send(embed=embed)
+    await asyncio.sleep(total)
+    embed=discord.Embed(title=thing,description=f"{ctx.author.mention} You were going to {thing} and asked me to remind you.")
+    await ctx.send(embed=embed)
 
 @bot.command()
 async def rps(ctx, *,args):
@@ -385,5 +407,4 @@ async def help(ctx):
     	inline = True)
     await ctx.send(embed = embed)
 
-keep_alive.keep_alive()
 bot.run('MY TOKEN')
