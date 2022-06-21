@@ -5,6 +5,10 @@
 To get the current time.
 #### ~say <sentence>:
 To repeat a sentence you typed in.('admin' roles only)
+#### ~translate
+To Translate the sentence to certain language.
+#### ~remindme
+To remind you to do something in x hrs, y mins, z secs.
 #### ~join: 
 To join the game and then you can earn your money by playing.
 #### ~rps <option> <money>: 
