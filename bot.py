@@ -7,70 +7,11 @@ import random
 import asyncio
 import requests
 from googletrans import Translator
+from math import *
+import datetime
 
 intents=discord.Intents.all()
 bot=commands.Bot(command_prefix="~",intents=intents)
-
-# calc
-from math import *
-def operation(s):
-    s = s.replace(' ', '')
-    s = s.replace('^', '**')
-    s = s.replace('log', 'log10')
-    s = s.replace('ln', 'log')
-    i, t = len(s) - 1, 0
-    while i >= 0: 
-        if s[i] == '!':
-            if s[i - 1].isdigit():
-                t, i = i, i - 1
-                while s[i].isdigit():
-                    i -= 1
-                tmp = s[i + 1: t]
-                s = s[:i + 1] + 'factorial(' + tmp + ')' + s[t + 1:]
-            else:
-                t, right, i = i, 1, i - 2
-                while right:
-                    if s[i] == ')':
-                        right += 1
-                    if s[i] == '(':
-                        right -= 1
-                    i -= 1
-                tmp = s[i + 1:t]
-                s = s[:i + 1] + 'factorital(' + tmp + ')' + s[t + 1:]
-        i -= 1
-    try:
-        res = round(eval(s), 3)
-        return res
-    except:
-        res = '(type error or too difficult)'
-        return res
-
- # now
-import datetime
-def gettime():
-    x = datetime.datetime.now()
-    err = datetime.timedelta(hours=8)
-    x += err
-    y = x.year
-    m = ['Jan', 'Feb', 'Mar', 'Apr', 'May', 'Jun', 'Jul',
-         'Aug', 'Sep', 'Oct', 'Nov', 'Dec'][x.month - 1]
-    d = x.day
-    h = x.hour
-    mi = x.minute
-    s = x.second
-    w = ['Sun', 'Mon', 'Tue', 'Wed', 'Thu', 'Fri', 'Sat'][(x.weekday() + 1) % 7]
-    res = '{} {} {:02d} {:02d}:{:02d}:{:02d} {}'.format(w, m, d, h, mi, s, y)
-    return res
-
-def getdate():
-    x = datetime.datetime.now()
-    err = datetime.timedelta(hours=8)
-    x += err
-    y = x.year
-    m = x.month
-    d = x.day
-    res=str(y)+'-'+str(m)+'-'+str(d)
-    return res
 
 @bot.event
 async def on_ready():
@@ -138,11 +79,57 @@ async def translate(ctx, *,args):
     await ctx.send(s)
 
 @bot.command()
+def operation(s):
+    s = s.replace(' ', '')
+    s = s.replace('^', '**')
+    s = s.replace('log', 'log10')
+    s = s.replace('ln', 'log')
+    i, t = len(s) - 1, 0
+    while i >= 0: 
+        if s[i] == '!':
+            if s[i - 1].isdigit():
+                t, i = i, i - 1
+                while s[i].isdigit():
+                    i -= 1
+                tmp = s[i + 1: t]
+                s = s[:i + 1] + 'factorial(' + tmp + ')' + s[t + 1:]
+            else:
+                t, right, i = i, 1, i - 2
+                while right:
+                    if s[i] == ')':
+                        right += 1
+                    if s[i] == '(':
+                        right -= 1
+                    i -= 1
+                tmp = s[i + 1:t]
+                s = s[:i + 1] + 'factorital(' + tmp + ')' + s[t + 1:]
+        i -= 1
+    try:
+        res = round(eval(s), 3)
+        return res
+    except:
+        res = '(type error or too difficult)'
+        return res
 async def calc(ctx, *,args):
     ans=operation(args)
     await ctx.send(f'Result of {args} is {ans}.')
 
 @bot.command()
+def gettime():
+    x = datetime.datetime.now()
+    err = datetime.timedelta(hours=8)
+    x += err
+    y = x.year
+    m = ['Jan', 'Feb', 'Mar', 'Apr', 'May', 'Jun', 'Jul',
+         'Aug', 'Sep', 'Oct', 'Nov', 'Dec'][x.month - 1]
+    d = x.day
+    h = x.hour
+    mi = x.minute
+    s = x.second
+    w = ['Sun', 'Mon', 'Tue', 'Wed', 'Thu', 'Fri', 'Sat'][(x.weekday() + 1) % 7]
+    res = '{} {} {:02d} {:02d}:{:02d}:{:02d} {}'.format(w, m, d, h, mi, s, y)
+    return res
+
 async def now(ctx):
     await ctx.send(gettime())
 
@@ -164,6 +151,15 @@ async def nsfw(ctx, *,args):
     await ctx.send(url)
 
 @bot.command()
+def getdate():
+    x = datetime.datetime.now()
+    err = datetime.timedelta(hours=8)
+    x += err
+    y = x.year
+    m = x.month
+    d = x.day
+    res=str(y)+'-'+str(m)+'-'+str(d)
+    return res
 async def vote(ctx, *,args):
     emoji=['0️⃣','1️⃣','2️⃣','3️⃣','4️⃣','5️⃣','6️⃣','7️⃣','8️⃣','9️⃣',]
     options=args.split('|')
