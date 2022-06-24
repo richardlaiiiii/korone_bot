@@ -5,6 +5,7 @@ import os
 from random import choice
 import random
 import asyncio
+import requests
 from googletrans import Translator
 
 intents=discord.Intents.all()
@@ -155,6 +156,12 @@ async def guess(ctx, *,args):
         s = f'right ans is {tmp}, your ans is {a[n == tmp]}'
         return s
     await ctx.send(Guess(int(args)))
+
+@bot.command()
+async def nsfw(ctx, *,args):
+    num=str(args)
+    url='||'+'https://nhentai.net/g/'+num+'||'
+    await ctx.send(url)
 
 @bot.command()
 async def vote(ctx, *,args):
@@ -320,6 +327,7 @@ async def spam(ctx, *,args):
             await ctx.send("The spam times are too high.")
     else:
         await ctx.send('The spam times can\'t be zero or lower.')
+
 @bot.command()
 async def coins(ctx):
     if str(ctx.message.author.name) in coins:
@@ -354,6 +362,26 @@ async def give(ctx, *,args):
             await ctx.send("That's illegal.The money number should be positive!")
     else:
         await ctx.send("You should join first.")
+
+def url_true(url):
+    request = requests.get(url)
+    if request.status_code == 200:
+        return True
+    else:
+        return False
+@bot.command()
+async def pix(ctx, *,args):
+    msg = str(args)
+    await ctx.send(f'https://pixiv.cat/{msg[-8:]}.jpg')
+    """ 
+    if url_true(f'https://pixiv.cat/{msg[-8:]}.jpg'):
+        await ctx.send(f'https://pixiv.cat/{msg[-8:]}.jpg')
+    else:
+        x = 1
+        while url_true(f'https://pixiv.cat/{msg[-8:]}.jpg-{x}'):
+            await ctx.send(f'https://pixiv.cat/{msg[-8:]}.jpg-{x}')
+            x+=1
+    """ 
 bot.remove_command('help')
 @bot.command()
 async def help(ctx):
