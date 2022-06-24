@@ -2,7 +2,7 @@
 #### My prefix: 
 ~
 #### ~now: 
-To get the current time.
+`To get the current time.`
 #### ~say <sentence>:
 To repeat a sentence you typed in.('admin' roles only)
 #### ~translate
