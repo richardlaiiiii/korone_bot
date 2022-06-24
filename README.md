@@ -35,3 +35,5 @@ To play a tiny lottery game.
 To show how much money you have now.
 #### ~rank: 
 To see who earned the most money!
+#### ~pix:
+To crawl the pixiv image.
