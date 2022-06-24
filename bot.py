@@ -363,25 +363,17 @@ async def give(ctx, *,args):
     else:
         await ctx.send("You should join first.")
 
-def url_true(url):
-    request = requests.get(url)
-    if request.status_code == 200:
-        return True
-    else:
-        return False
 @bot.command()
 async def pix(ctx, *,args):
     msg = str(args)
-    await ctx.send(f'https://pixiv.cat/{msg[-8:]}.jpg')
-    """ 
-    if url_true(f'https://pixiv.cat/{msg[-8:]}.jpg'):
+    res = requests.get(f'https://pixiv.cat/{msg[-8:]}.jpg')
+    if int(res.status_code) == 200:
         await ctx.send(f'https://pixiv.cat/{msg[-8:]}.jpg')
-    else:
+    elif int(res.status_code) == 404:
         x = 1
-        while url_true(f'https://pixiv.cat/{msg[-8:]}.jpg-{x}'):
-            await ctx.send(f'https://pixiv.cat/{msg[-8:]}.jpg-{x}')
+        while int(requests.get(f'https://pixiv.cat/{msg[-8:]}-{x}.jpg').status_code) == 200:
+            await ctx.send(f'https://pixiv.cat/{msg[-8:]}-{x}.jpg')
             x+=1
-    """ 
 bot.remove_command('help')
 @bot.command()
 async def help(ctx):
@@ -440,6 +432,9 @@ async def help(ctx):
     embed.add_field(name = '~rank',\
     	value = 'To see who earned the most money.',\
     	inline = True)
+    embed.add_field(name = '~pix <url>',\
+        value = 'To crawl the image in pixiv.',\
+        inline = True)
     await ctx.send(embed = embed)
 
-bot.run('TOKEN')
+bot.run('BOT TOKEN')
